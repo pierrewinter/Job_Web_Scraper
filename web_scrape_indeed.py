@@ -1,6 +1,6 @@
 """
 This module is used to scrape job listing information from an online job portal (here we look at Indeed).
-The data is collected and saved to a .csv file.
+The data is parsed, aggregated, and saved to a .csv file.
 """
 
 __author__ = "Pierre Winter"
@@ -10,17 +10,21 @@ from bs4 import BeautifulSoup as bs
 import re
 
 #-----------------------------------------INPUT PARAMETERS-------------------------------------------------------------
-# We want to find job listings on Indeed for full-time data scientist positions in a given city area (50 mile radius).
+# We want to find up to 500 job listings on Indeed for full-time data scientist positions within 50 miles of Los Angeles.
 
+job_name = 'Data+Scientist'  # Use plus sign instead of spaces here.
+job_type = 'fulltime'  # Use plus sign instead of spaces here.
+search_radius = 50  # Radius in miles to search jobs from.
 long_city_name = 'Los+Angeles'  # Use plus sign instead of spaces here.
 short_city_name = 'LA'  # This can be any abbreviation for your output filename.
+state_name = 'CA'  # State abbreviation.
 default_jobs_per_page = 50  # I set this to the maximum allowable, which is 50 for Indeed. This minimizes the number of individual HTTP URL calls needed.
-max_page_number = 500  # Maximum number of pages you would want in the .csv file.
+max_page_number = 500  # Maximum number of pages/jobs you would want in the .csv file.
 delim = ';'  # Used to delimit entries in the .csv file. I don't use a comma because some companies have commas in their name.
 #----------------------------------------------------------------------------------------------------------------------
 
-job_listings_website = 'https://www.indeed.com/jobs?q=Data+Scientist&l='+long_city_name+'%2C+CA&radius=50&jt=fulltime&limit='+str(default_jobs_per_page)
-output_filename = 'data_science_jobs_indeed_'+short_city_name+'.csv'
+job_listings_website = 'https://www.indeed.com/jobs?q='+job_name+'&l='+long_city_name+'%2C+'+state_name+'&radius='+str(search_radius)+'&jt='+job_type+'&limit='+str(default_jobs_per_page)
+output_filename = job_name+'_jobs_indeed_'+short_city_name+'.csv'
 output_column_names = 'Job Title' + delim + 'Company Name' + delim + 'Job City' + delim + 'Job Rating' + delim + 'Job Post Date\n'
 f = open(output_filename, 'w')
 f.write(output_column_names)
